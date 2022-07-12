@@ -8,5 +8,6 @@ from common_utils.helpers import common_ut
 # create_table_ut.create_table(common_ut.Query.creating_platforms_tbl)
 # create_table_ut.create_table(common_ut.Query.new_releases_tbl)
 # create_table_ut.create_table(common_ut.Query.imdb_top_rated_movies_tbl)
-create_table_ut.create_table(common_ut.Query.imdb_top_rate_series_crawler_tbl)
+# create_table_ut.create_table(common_ut.Query.imdb_top_rate_series_crawler_tbl)
+create_table_ut.create_table(common_ut.Query.admin_tbl)
 

@@ -89,3 +89,16 @@ class Query:
                                 );
 
                         '''
+
+    admin_tbl = '''
+                                    CREATE TABLE admin (
+                                    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                    uuid VARCHAR(200),
+                                    email VARCHAR(500),
+                                    password VARCHAR(500),
+                                    type VARCHAR(200),
+                                    deleted int DEFAULT 0,
+                                    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                                );
+
+                        '''
