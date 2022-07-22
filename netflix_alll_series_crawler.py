@@ -5,6 +5,7 @@ try:
     import sys,os
     from os.path import dirname, join, abspath
     import schedule, time
+    import csv
 
 
     sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), os.path.pardir)))
@@ -18,7 +19,7 @@ except Exception as e:
 
 
 
-URL = 'https://www.imdb.com/list/ls026838481/'  #TODO:
+URL = 'https://www.whats-on-netflix.com/library/series/'  #TODO:
 
 DB = MySqlDB.MysqlDatabase(False, **{
         'mysql_pool_name': crawler_util.config.get('mysql', 'pool_name'),
@@ -33,21 +34,18 @@ DB = MySqlDB.MysqlDatabase(False, **{
 NOW = datetime.now()
 SLEEP_TIME = 600 #seconds
 
-def parse_table(table): 
-    head_body = {'head':[], 'body':[]}
-    for tr in table.cssselect('tr'): 
-        if all(t.tag == 'th' for t in tr.getchildren()): 
-            head_body['head'] += [tr]
-        else: 
-            head_body['body'] += [tr]
-    return head_body 
-
-
 def crawler():
     print ('executing....imdb_top_chart_crawler.....script....')
     try:
         print("***********running script on: %s ***********"% NOW.strftime("%d/%m/%Y %H:%M:%S"))
         print("trying to connecting is url: %s" % URL)
+        
+        with open('netflix_titles.csv', newline='') as csvfile:
+            spamreader = csv.reader(csvfile, delimiter=' ', quotechar='|')
+            for row in spamreader:
+                print(', '.join(row))
+
+
         response = requests.get(URL)
 
         if response.status_code == 200:

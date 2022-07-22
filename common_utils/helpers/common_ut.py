@@ -98,7 +98,71 @@ class Query:
                                     password VARCHAR(500),
                                     type VARCHAR(200),
                                     deleted int DEFAULT 0,
+                                    two_fa_enabled tinyint DEFAULT 0,
                                     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
                                 );
 
                         '''
+                        
+    login_session_tb = '''
+                                        CREATE TABLE login_session (
+                                        id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                        uuid VARCHAR(200),
+                                        token text,
+                                        user_id int,
+                                        session_expiry_timestamp DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP ,
+                                        deleted int DEFAULT 0,
+                                        ip VARCHAR(200),
+                                        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                                    );
+
+                            '''
+
+    current_streaming_movies_tbl = '''
+                                CREATE TABLE current_streaming_movies (
+                                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                uuid VARCHAR(200),
+                                name VARCHAR(500),
+                                platform_name VARCHAR(500),
+                                status VARCHAR(200),
+                                link  VARCHAR(500),
+                                image VARCHAR(500),
+                                description VARCHAR(500),
+                                deleted int DEFAULT 0,
+                                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                            );
+                            
+                            '''
+
+
+    current_streaming_series_tbl = '''
+                                CREATE TABLE current_streaming_series (
+                                id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                uuid VARCHAR(200),
+                                name VARCHAR(500),
+                                platform_name VARCHAR(500),
+                                status VARCHAR(200),
+                                start_date VARCHAR(300),
+                                link  VARCHAR(500),
+                                image VARCHAR(500),
+                                description VARCHAR(500),
+                                deleted int DEFAULT 0,
+                                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                            );
+                            
+                            '''
+
+    comming_soon_movies_tbl = '''
+                                    CREATE TABLE comming_soon_movies (
+                                    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                    uuid VARCHAR(200),
+                                    name VARCHAR(500),
+                                    status VARCHAR(200),
+                                    link  VARCHAR(500),
+                                    image VARCHAR(500),
+                                    description VARCHAR(500),
+                                    deleted int DEFAULT 0,
+                                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                                );
+                                
+                                '''
