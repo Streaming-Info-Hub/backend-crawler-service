@@ -84,7 +84,7 @@ def crawler():
                                 "uuid": CommonsUtils.generate_uuid4(),
                                 "name": final_data.get("title", ""),
                                 "platform_name": platform_name,
-                                "status": 'in_active',
+                                "status": 'active',
                                 "image": final_data.get("posterUri", ""),
                                 "start_date": final_data.get("startDate",""),
                                 "genres": genres

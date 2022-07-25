@@ -1,7 +1,3 @@
-from email import header
-from platform import platform
-from typing import final
-
 try:
     import sys,os
     from os.path import dirname, join, abspath
@@ -23,9 +19,7 @@ except Exception as e:
     print("Some modules are not installed : {}".format(e))
 
 
-platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus', 'hulu']
-URL = "https://www.rottentomatoes.com/napi/browse/movies_at_home/sort:newest?affiliates:%s?page=%s"
-page_numbers = [1,2,4,5,6,7,8,9,10]
+URL = "https://www.episodate.com/api/most-popular?page=%s"
 
 DB = MySqlDB.MysqlDatabase(False, **{
         'mysql_pool_name': crawler_util.config.get('mysql', 'pool_name'),
@@ -46,43 +40,52 @@ def parse_dictionary(data):
 
 
 def crawler():
-    print ('executing....current_showing_movies_crawler.......script....')
+    print ('executing....most_popular_series_crawler.......script....')
     try:
         print("***********running script on: %s ***********"% NOW.strftime("%d/%m/%Y %H:%M:%S"))
-        for platform_name in platform_list:
-            print("trying to connecting is For Platform: %s"%platform_name)
-            headers = {
-               "authority": "www.rottentomatoes.com",
-               "accept": "*/*",
-               "accept-language": "en-US,en;q=0.9",
-               "sec-fetch-dest": "empty",
-               "sec-fetch-mode": "cors",
-               "sec-fetch-site": "same-origin",
-               "sec-gpc": "1",
-               "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36"
+        headers = {
+            "authority": "www.rottentomatoes.com",
+            "accept": "*/*",
+            "accept-language": "en-US,en;q=0.9",
+            "sec-fetch-dest": "empty",
+            "sec-fetch-mode": "cors",
+            "sec-fetch-site": "same-origin",
+            "sec-gpc": "1",
+            "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36"
             }
+        page =1
+        response = requests.get(URL%(page), headers=headers)
+        if response.status_code == 200:
+            data = response.content.decode('UTF-8')
+            result = json.loads(data)
+            page_numbers = range(result.get("pages", 1088))
             for page in page_numbers:
-                response = requests.get(URL%(platform_name,page), headers=headers)
+                response = requests.get(URL%(page), headers=headers)
                 if response.status_code == 200:
                     data = response.content.decode('UTF-8')
                     result = json.loads(data)
-                    movies_response = result.get("grids")
-                    list = movies_response[0].get("list")
+
+                    list = result.get("tv_shows")
 
                     for final_data in list:
                         insert_object = {
                             "uuid": CommonsUtils.generate_uuid4(),
-                            "name": final_data.get("title", ""),
-                            "start_date": final_data.get("startDate", ""),
-                            "platform_name": platform_name,
-                            "status": 'active',
-                            "image": final_data.get("posterUri", "")
+                            "unique_id": final_data.get("id") or "Null",
+                            "name": final_data.get("name", "").replace("'", " "),
+                            "permalink": final_data.get("permalink") or "Null",
+                            "start_date": final_data.get("start_date")or "Null",
+                            "end_date": final_data.get("start_date")or "Null",
+                            "country": final_data.get("country")or "Null",
+                            "platform_name": final_data.get("network", "").lower(),
+                            "streaming_status": final_data.get("status")or "Null",
+                            "image": final_data.get("image_thumbnail_path")or "Null",
+                            "status": "active"
                         }
 
                         data_exist = DB.find_sql(
-                                            table_name=crawler_util.config.get('tables', 'current_streaming_movies'),
+                                            table_name=crawler_util.config.get('tables', 'most_popular_series'),
                                             filters={
-                                                'name': final_data.get("title")
+                                                'name': final_data.get("name")
                                             }
                                         )
 
@@ -91,13 +94,13 @@ def crawler():
                             continue
 
                         else:
-                            insert_response = DB.insert_sql(table_name=crawler_util.config.get('tables', 'current_streaming_movies'),insert_data=insert_object) #TODO:
+                            insert_response = DB.insert_sql(table_name=crawler_util.config.get('tables', 'most_popular_series'),insert_data=insert_object) #TODO:
                             if insert_response:
                                 print("insert processed successfully the data is: %s"% insert_object) 
 
     except Exception as e:
-        error =  CommonsUtils.get_error_traceback(sys, e)
-        print("Erroe message is : %s"%error)
+            error =  CommonsUtils.get_error_traceback(sys, e)
+            print("Erroe message is : %s"%error)
     finally:
         print("crawler execute successfully on: %s"% NOW.strftime("%d/%m/%Y %H:%M:%S"))
 
@@ -110,4 +113,3 @@ while True:
     schedule.run_pending()
     time.sleep(SLEEP_TIME)
     crawler()
-

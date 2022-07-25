@@ -175,7 +175,7 @@ class MysqlDatabase(BaseDatabase):
 
         except Exception as e :
             error = common_util.get_error_traceback(sys, e)
-            # print ('>>>>>>>> MYSQL  Error : %s ' %error)
+            print ('>>>>>>>> MYSQL  Error : %s ' %error)
             if self.logger: self.logger.error('>>>>>>>> Mysql Error %s' %(error))
             raise e
         finally:

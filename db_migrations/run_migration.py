@@ -14,7 +14,9 @@ from common_utils.helpers import common_ut
 #create_table_ut.create_table(common_ut.Query.current_streaming_movies_tbl)
 #create_table_ut.create_table(common_ut.Query.current_streaming_series_tbl)
 #create_table_ut.create_table(common_ut.Query.comming_soon_movies_tbl)
-create_table_ut.create_table(common_ut.Query.tonight_streaming_series_tbl)
+#create_table_ut.create_table(common_ut.Query.tonight_streaming_series_tbl)
+create_table_ut.create_table(common_ut.Query.most_popular_series_tbl)
+
 
 
 
