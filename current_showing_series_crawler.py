@@ -18,9 +18,22 @@ try:
 except Exception as e:
     print("Some modules are not installed : {}".format(e))
 
+genera_type_list = [
+    "action",
+    "adventure",
+    "animation",
+    "anime",
+    "biography",
+    "comedy","crime","documentary","drama",
+    "faith_and_spirituality","fantasy","foreign","game_show",
+    "health_and_wellness","history","horror","house_and_garden",
+    "independent","kids_and_family","lgbtq","music","musical","mystery_and_thriller",
+    "nature","news","other","reality","romance","sci_fi","short","soap","special_interest",
+    "sports_and_fitness","stand_up","talk_show","travel","variety","war","western"]
+
 
 platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus']
-URL = "https://www.rottentomatoes.com/napi/browse/tv_series_browse/affiliates:%s?page=%s"
+URL = "https://www.rottentomatoes.com/napi/browse/tv_series_browse/affiliates:%s~genres:%s?page=%s"
 page_numbers = [1,2,4,5,6,7,8,9,10]
 
 DB = MySqlDB.MysqlDatabase(False, **{
@@ -57,38 +70,41 @@ def crawler():
                "sec-gpc": "1",
                "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36"
             }
-            for page in page_numbers:
-                response = requests.get(URL%(platform_name,page), headers=headers)
-                if response.status_code == 200:
-                    data = response.content.decode('UTF-8')
-                    result = json.loads(data)
-                    movies_response = result.get("grids")
-                    list = movies_response[0].get("list")
+            for genres in genera_type_list:
+                for page in page_numbers:
+                    response = requests.get(URL%(platform_name,genres,page), headers=headers)
+                    if response.status_code == 200:
+                        data = response.content.decode('UTF-8')
+                        result = json.loads(data)
+                        movies_response = result.get("grids")
+                        list = movies_response[0].get("list")
 
-                    for final_data in list:
-                        insert_object = {
-                            "uuid": CommonsUtils.generate_uuid4(),
-                            "name": final_data.get("title", ""),
-                            "platform_name": platform_name,
-                            "status": 'in_active',
-                            "image": final_data.get("posterUri", "")
-                        }
+                        for final_data in list:
+                            insert_object = {
+                                "uuid": CommonsUtils.generate_uuid4(),
+                                "name": final_data.get("title", ""),
+                                "platform_name": platform_name,
+                                "status": 'in_active',
+                                "image": final_data.get("posterUri", ""),
+                                "start_date": final_data.get("startDate",""),
+                                "genres": genres
+                            }
 
-                        data_exist = DB.find_sql(
-                                            table_name=crawler_util.config.get('tables', 'current_streaming_series'),
-                                            filters={
-                                                'name': final_data.get("title")
-                                            }
-                                        )
+                            data_exist = DB.find_sql(
+                                                table_name=crawler_util.config.get('tables', 'current_streaming_series'),
+                                                filters={
+                                                    'name': final_data.get("title")
+                                                }
+                                            )
 
-                        if data_exist:
-                            print("processs skipped:::: because data is already exists on our database")
-                            continue
+                            if data_exist:
+                                print("processs skipped:::: because data is already exists on our database")
+                                continue
 
-                        else:
-                            insert_response = DB.insert_sql(table_name=crawler_util.config.get('tables', 'current_streaming_series'),insert_data=insert_object) #TODO:
-                            if insert_response:
-                                print("insert processed successfully the data is: %s"% insert_object) 
+                            else:
+                                insert_response = DB.insert_sql(table_name=crawler_util.config.get('tables', 'current_streaming_series'),insert_data=insert_object) #TODO:
+                                if insert_response:
+                                    print("insert processed successfully the data is: %s"% insert_object) 
 
     except Exception as e:
         error =  CommonsUtils.get_error_traceback(sys, e)
