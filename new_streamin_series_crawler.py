@@ -1,7 +1,3 @@
-from email import header
-from platform import platform
-from typing import final
-
 try:
     import sys,os
     from os.path import dirname, join, abspath
@@ -23,8 +19,8 @@ except Exception as e:
     print("Some modules are not installed : {}".format(e))
 
 
-platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus', 'hulu']
-URL = "https://www.rottentomatoes.com/napi/browse/movies_at_home/sort:newest?affiliates:%s?page=%s"
+platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus']
+URL = "https://www.rottentomatoes.com/napi/browse/tv_series_browse/affiliates:%s~sort:newest?page=%s"
 page_numbers = [1,2,4,5,6,7,8,9,10]
 
 DB = MySqlDB.MysqlDatabase(False, **{
@@ -46,7 +42,7 @@ def parse_dictionary(data):
 
 
 def crawler():
-    print ('executing....current_showing_movies_crawler.......script....')
+    print ('executing....tonight_streamin_series_crawler.......script....')
     try:
         print("***********running script on: %s ***********"% NOW.strftime("%d/%m/%Y %H:%M:%S"))
         for platform_name in platform_list:
@@ -61,6 +57,7 @@ def crawler():
                "sec-gpc": "1",
                "user-agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.67 Safari/537.36"
             }
+
             for page in page_numbers:
                 response = requests.get(URL%(platform_name,page), headers=headers)
                 if response.status_code == 200:
@@ -73,14 +70,14 @@ def crawler():
                         insert_object = {
                             "uuid": CommonsUtils.generate_uuid4(),
                             "name": final_data.get("title", ""),
-                            "start_date": final_data.get("startDate", ""),
                             "platform_name": platform_name,
                             "status": 'in_active',
-                            "image": final_data.get("posterUri", "")
-                        }
+                            "image": final_data.get("posterUri", ""),
+                            "start_date": final_data.get("startDate","")                        
+                            }
 
                         data_exist = DB.find_sql(
-                                            table_name=crawler_util.config.get('tables', 'current_streaming_movies'),
+                                            table_name=crawler_util.config.get('tables', 'tonight_streaming_series'),
                                             filters={
                                                 'name': final_data.get("title")
                                             }
@@ -91,7 +88,7 @@ def crawler():
                             continue
 
                         else:
-                            insert_response = DB.insert_sql(table_name=crawler_util.config.get('tables', 'current_streaming_movies'),insert_data=insert_object) #TODO:
+                            insert_response = DB.insert_sql(table_name=crawler_util.config.get('tables', 'tonight_streaming_series'),insert_data=insert_object) #TODO:
                             if insert_response:
                                 print("insert processed successfully the data is: %s"% insert_object) 
 
@@ -110,4 +107,3 @@ while True:
     schedule.run_pending()
     time.sleep(SLEEP_TIME)
     crawler()
-

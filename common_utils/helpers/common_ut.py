@@ -125,6 +125,7 @@ class Query:
                                 name VARCHAR(500),
                                 platform_name VARCHAR(500),
                                 status VARCHAR(200),
+                                genres VARCHAR(400),
                                 link  VARCHAR(500),
                                 image VARCHAR(500),
                                 description VARCHAR(500),
@@ -142,6 +143,7 @@ class Query:
                                 name VARCHAR(500),
                                 platform_name VARCHAR(500),
                                 status VARCHAR(200),
+                                genres VARCHAR(400),
                                 start_date VARCHAR(300),
                                 link  VARCHAR(500),
                                 image VARCHAR(500),
@@ -158,6 +160,24 @@ class Query:
                                     uuid VARCHAR(200),
                                     name VARCHAR(500),
                                     status VARCHAR(200),
+                                    genres VARCHAR(400),
+                                    link  VARCHAR(500),
+                                    image VARCHAR(500),
+                                    description VARCHAR(500),
+                                    deleted int DEFAULT 0,
+                                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                                );
+                                
+                                '''
+
+    tonight_streaming_series_tbl = '''
+                                    CREATE TABLE tonight_streaming_series (
+                                    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                    uuid VARCHAR(200),
+                                    name VARCHAR(500),
+                                    platform_name VARCHAR(500),
+                                    status VARCHAR(200),
+                                    start_date VARCHAR(300),
                                     link  VARCHAR(500),
                                     image VARCHAR(500),
                                     description VARCHAR(500),
