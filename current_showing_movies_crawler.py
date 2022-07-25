@@ -23,7 +23,7 @@ except Exception as e:
     print("Some modules are not installed : {}".format(e))
 
 
-platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus']
+platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus', 'hulu']
 URL = "https://www.rottentomatoes.com/napi/browse/movies_at_home/sort:newest?affiliates:%s?page=%s"
 page_numbers = [1,2,4,5,6,7,8,9,10]
 

@@ -32,7 +32,7 @@ genera_type_list = [
     "sports_and_fitness","stand_up","talk_show","travel","variety","war","western"]
 
 
-platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus']
+platform_list = ['netflix', 'amazon_prime', 'disney_plus', 'hbo_max', 'apple_tv_plus', 'hulu']
 URL = "https://www.rottentomatoes.com/napi/browse/tv_series_browse/affiliates:%s~genres:%s?page=%s"
 page_numbers = [1,2,4,5,6,7,8,9,10]
 
