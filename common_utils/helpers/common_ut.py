@@ -186,3 +186,26 @@ class Query:
                                 );
                                 
                                 '''
+
+
+    most_popular_series_tbl = '''
+                                    CREATE TABLE most_popular_series (
+                                    id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                                    uuid VARCHAR(200),
+                                    unique_id BIGINT,
+                                    name VARCHAR(500),
+                                    platform_name VARCHAR(500),
+                                    status VARCHAR(200),
+                                    streaming_status VARCHAR(400),
+                                    start_date VARCHAR(300),
+                                    end_date VARCHAR(300),
+                                    country VARCHAR(300),
+                                    permalink VARCHAR(400),
+                                    link  VARCHAR(500),
+                                    image VARCHAR(500),
+                                    description VARCHAR(500),
+                                    deleted int DEFAULT 0,
+                                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+                                );
+                                
+                                '''
