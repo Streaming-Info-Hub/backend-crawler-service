@@ -92,7 +92,7 @@ def crawler():
                     "platform_name": platform.lower(),
                     "releases_date" : released_date,
                     "platform_id": 1,#TODO:
-                    "status": 'in_active'
+                    "status": 'active'
                 }
 
                 data_exist = DB.find_sql(
